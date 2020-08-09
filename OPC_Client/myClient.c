@@ -1,13 +1,18 @@
-#include <open62541/client_config_default.h>
-#include <open62541/client_highlevel.h>
-#include <open62541/plugin/log_stdout.h>
+//#include <open62541/client_config.h>
+//#include <open62541/client_highlevel.h>
+//#include <open62541/plugin/log.h>
 
 #include <stdlib.h>
+
+
+#include "open62541.h"
+
+//extern const UA_Logger *UA_Log_Stdout ;
 
 int main(void) {
     UA_Client *client = UA_Client_new();
     UA_ClientConfig_setDefault(UA_Client_getConfig(client));
-    UA_StatusCode retval = UA_Client_connect(client, "opc.tcp://PTPL-YASH:4840/");
+    UA_StatusCode retval = UA_Client_connect(client, "opc.tcp://raspberrypi:4840/");//"opc.tcp://DELL-Milind:4840/", Read ReadMe.txt to know how to find out the name of your computer.
     if(retval != UA_STATUSCODE_GOOD) {
         UA_Client_delete(client);
         return (int)retval;
@@ -36,18 +41,18 @@ int main(void) {
     
     //Read Vendor Name
     retval = UA_Client_readValueAttribute(client, UA_NODEID_STRING(2, "R1_TS1_VendorName" ), &value);
-    if(retval == UA_STATUSCODE_GOOD &&
-       UA_Variant_hasScalarType(&value, &UA_TYPES[UA_TYPES_STRING])) {
-		   VendorName = *(UA_String *) value.data;
-			UA_LOG_INFO(UA_Log_Stdout, UA_LOGCATEGORY_USERLAND, "Vendor Name is %.*s \n",VendorName.length, VendorName.data );
+    if(retval == UA_STATUSCODE_GOOD && UA_Variant_hasScalarType(&value, &UA_TYPES[UA_TYPES_STRING])) {
+
+		VendorName = *(UA_String *) value.data;
+		UA_LOG_INFO(UA_Log_Stdout, UA_LOGCATEGORY_USERLAND, "Vendor Name is %.*s \n",VendorName.length, VendorName.data );
 	}
 	
     //Read Serial Number
     retval = UA_Client_readValueAttribute(client, UA_NODEID_STRING(2, "R1_TS1_SerialNumber" ), &value);
-    if(retval == UA_STATUSCODE_GOOD &&
-       UA_Variant_hasScalarType(&value, &UA_TYPES[UA_TYPES_INT32])) {
-		   SerialNumber = *(UA_Int32 *) value.data;
-			UA_LOG_INFO(UA_Log_Stdout, UA_LOGCATEGORY_USERLAND, "Serial Number is %d \n", SerialNumber );
+    if(retval == UA_STATUSCODE_GOOD && UA_Variant_hasScalarType(&value, &UA_TYPES[UA_TYPES_INT32])) {
+		
+		SerialNumber = *(UA_Int32 *) value.data;
+		UA_LOG_INFO(UA_Log_Stdout, UA_LOGCATEGORY_USERLAND, "Serial Number is %d \n", SerialNumber );
 	}
 	
 	
